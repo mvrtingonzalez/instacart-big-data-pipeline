@@ -299,7 +299,7 @@ Para ejecutar el proyecto se necesitan las siguientes herramientas:
 Descargar el proyecto desde GitHub mediante:
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/mvrtingonzalez/instacart-big-data-pipeline.git
 cd instacard-big-data-pipeline
 ```
 
