@@ -1,0 +1,239 @@
+
+version: 2
+
+sources:
+  - name: instacart
+    database: instacart
+    schema: public
+    tables:
+      - name: master_instacart
+
+models:
+  - name: stg_instacart__orders
+    description: "Información única de cada pedido."
+    columns:
+      - name: pedido_id
+        description: "Identificador único del pedido."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: usuario_id
+        description: "Identificador del usuario que realizó el pedido"
+
+      - name: numero_pedido
+        description: "Número de pedido dentro del historial del usuario"
+
+      - name: dia_semana
+        description: "Día de la semana en que se realizó el pedido"
+
+      - name: hora_pedido
+        description: "Hora del día en que se realizó el pedido"
+
+      - name: dias_desde_pedido_anterior
+        description: "Cantidad de días transcurridos desde el pedido anterior"
+
+
+
+
+
+  - name: stg_instacart__products
+    description: "Catálogo de productos con información de pasillos y departamentos."
+    columns:
+      - name: producto_id
+        description: "Identificador único del producto."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: nombre_producto
+        description: "Nombre del producto."
+
+      - name: pasillo_id
+        description: "Identificador del pasillo al que pertenece el producto."
+
+      - name: pasillo
+        description: "Nombre del pasillo al que pertenece el producto."
+
+      - name: departamento
+        description: "Nombre del departamento al que pertenece el producto."
+
+      - name: departamento_id
+        description: "Identificador del departamento al que pertenece el producto."
+
+
+
+
+
+  - name: stg_instacart__order_products
+    description: "Relación entre los pedidos y los productos que contiene cada uno."
+    columns:
+      - name: pedido_id
+        description: "Identificador del pedido al que pertenece el producto."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_instacart__orders')
+                field: pedido_id
+
+      - name: producto_id
+        description: "Identificador del producto asociado al pedido."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_instacart__products')
+                field: producto_id
+
+      - name: orden_agregado_carrito
+        description: "Posición en la que se agregó el producto al carrito."
+
+      - name: recompra
+        description: "Indica si el usuario había comprado anteriormente el producto."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+
+
+
+
+
+  - name: int_instacart__order_items
+    description: "Detalle de los productos asociados a cada pedido, enriquecido con información de usuarios, pedidos y productos."
+    columns:
+      - name: pedido_id
+        description: "Identificador del pedido al que pertenece el producto."
+        data_tests:
+          - not_null
+
+      - name: usuario_id
+        description: "Identificador del usuario que realizó el pedido."
+
+      - name: numero_pedido
+        description: "Número de pedido dentro del historial del usuario."
+
+      - name: dia_semana
+        description: "Día de la semana en que se realizó el pedido."
+
+      - name: hora_pedido
+        description: "Hora del día en que se realizó el pedido."
+
+      - name: producto_id
+        description: "Identificador del producto asociado al pedido."
+        data_tests:
+          - not_null
+
+      - name: orden_agregado_carrito
+        description: "Posición en la que se agregó el producto al carrito."
+
+      - name: recompra
+        description: "Indica si el usuario había comprado anteriormente el producto."
+
+      - name: nombre_producto
+        description: "Nombre del producto comprado."
+
+      - name: departamento
+        description: "Departamento al que pertenece el producto."
+
+
+
+
+
+
+  - name: int_instacart__order_summary
+    description: "Resumen de los productos incluidos en cada pedido y sus cantidades de recompra."
+    columns:
+      - name: pedido_id
+        description: "Identificador único del pedido."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: usuario_id
+        description: "Identificador del usuario que realizó el pedido."
+        data_tests:
+          - not_null
+
+      - name: total_productos
+        description: "Cantidad total de productos incluidos en el pedido."
+
+      - name: productos_recomprados
+        description: "Cantidad de productos del pedido que corresponden a recompras."
+
+
+
+
+
+  - name: mart_product_performance
+    description: "Métricas de rendimiento de los productos según su cantidad de compras y recompras."
+    columns:
+      - name: producto_id
+        description: "Identificador único del producto."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: nombre_producto
+        description: "Nombre del producto."
+
+      - name: cantidad_compras
+        description: "Cantidad total de veces que se compró el producto."
+
+      - name: cantidad_recompras
+        description: "Cantidad de veces que el producto fue comprado nuevamente."
+
+      - name: porcentaje_recompra
+        description: "Porcentaje de compras que corresponden a recompras."
+
+
+
+
+
+  - name: mart_department_performance
+    description: "Métricas de rendimiento de los departamentos según sus compras y recompras."
+    columns:
+      - name: departamento
+        description: "Nombre del departamento."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: total_compras
+        description: "Cantidad total de productos comprados dentro del departamento."
+
+      - name: productos_distintos
+        description: "Cantidad de productos diferentes comprados dentro del departamento."
+
+      - name: total_recompras
+        description: "Cantidad total de compras que corresponden a recompras dentro del departamento."
+
+      - name: porcentaje_recompra
+        description: "Porcentaje de compras del departamento que corresponden a recompras."
+
+
+
+
+
+  - name: mart_user_behavior
+    description: "Métricas de comportamiento de compra de cada usuario."
+    columns:
+      - name: usuario_id
+        description: "Identificador único del usuario."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: cantidad_pedidos
+        description: "Cantidad de pedidos realizados por el usuario."
+
+      - name: productos_comprados
+        description: "Cantidad total de productos comprados por el usuario."
+
+      - name: productos_recomprados
+        description: "Cantidad de productos comprados nuevamente por el usuario."
+
+      - name: promedio_productos_por_pedido
+        description: "Promedio de productos incluidos en los pedidos del usuario."
+

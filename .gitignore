@@ -1,0 +1,40 @@
+
+# Entornos virtuales
+venv/
+venv-linux/
+.venv/
+
+# Datos originales y procesados
+data/raw/
+data/processed/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# PySpark y Java
+spark-warehouse/
+metastore_db/
+derby.log
+hs_err_pid*.log
+
+# dbt
+**/target/
+**/dbt_packages/
+**/logs/
+**/partial_parse.msgpack
+**/profiles.yml
+
+# Logs
+*.log
+
+# Variables de entorno y credenciales
+.env
+.env.*
+!.env.example
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
